@@ -17,7 +17,12 @@ const PORT = process.env.PORT || 5000;
 // ── Middleware ────────────────────────────────────────────────
 app.use(helmet({ crossOriginResourcePolicy: false }));
 const allowedOrigins = process.env.NODE_ENV === "production"
-  ? ["https://theagentnews.com", "https://www.theagentnews.com"]
+  ? [
+      "https://theagentnews.com",
+      "https://www.theagentnews.com",
+      // Vercel preview URLs (any subdomain of vercel.app)
+      /https:\/\/.*\.vercel\.app$/,
+    ]
   : true;
 app.use(cors({ origin: allowedOrigins, credentials: true }));
 app.use(morgan("dev"));
