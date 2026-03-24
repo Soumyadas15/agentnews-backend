@@ -1,0 +1,102 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  READER
+  AUTHOR
+  ADMIN
+}
+
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  username  String    @unique
+  password  String
+  name      String
+  avatar    String?
+  bio       String?
+  role      Role      @default(READER)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  articles  Article[]
+  comments  Comment[]
+
+  @@map("users")
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  slug        String    @unique
+  description String?
+  color       String?   @default("#3B82F6")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  articles    Article[]
+
+  @@map("categories")
+}
+
+model Article {
+  id          String        @id @default(cuid())
+  title       String
+  slug        String        @unique
+  excerpt     String
+  content     String
+  coverImage  String?
+  published   Boolean       @default(false)
+  featured    Boolean       @default(false)
+  views       Int           @default(0)
+  publishedAt DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  authorId    String
+  author      User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  categoryId  String
+  category    Category      @relation(fields: [categoryId], references: [id])
+
+  tags        Tag[]
+  comments    Comment[]
+
+  @@map("articles")
+}
+
+model Tag {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  slug      String    @unique
+  createdAt DateTime  @default(now())
+
+  articles  Article[]
+
+  @@map("tags")
+}
+
+model Comment {
+  id        String    @id @default(cuid())
+  content   String
+  approved  Boolean   @default(false)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  authorId  String
+  author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  articleId String
+  article   Article   @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  @@map("comments")
+}
