@@ -100,3 +100,16 @@ model Comment {
 
   @@map("comments")
 }
+
+// Tracks URLs already ingested by the sourcing engine to prevent duplicates
+model SourcedArticle {
+  id          String   @id @default(cuid())
+  sourceUrl   String   @unique
+  sourceTitle String
+  sourceName  String
+  fetchedAt   DateTime @default(now())
+  published   Boolean  @default(false)
+  articleId   String?  // linked Article if successfully created
+
+  @@map("sourced_articles")
+}

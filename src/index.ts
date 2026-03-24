@@ -10,6 +10,7 @@ import articleRoutes from "./routes/article.routes";
 import categoryRoutes from "./routes/category.routes";
 import commentRoutes from "./routes/comment.routes";
 import { errorHandler, notFound } from "./middleware/errorHandler";
+import { startSourcingScheduler, getSourcingStatus } from "./services/sourcing/scheduler";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -44,6 +45,11 @@ app.use("/api/articles", articleRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api", commentRoutes);
 
+// ── Sourcing status endpoint ──────────────────────────────────
+app.get("/api/sourcing/status", (_req, res) => {
+  res.json(getSourcingStatus());
+});
+
 // ── Error handling ────────────────────────────────────────────
 app.use(notFound);
 app.use(errorHandler);
@@ -53,6 +59,11 @@ app.listen(PORT, () => {
   console.log(`\n🚀 AgentNews API running on http://localhost:${PORT}`);
   console.log(`📋 Health check: http://localhost:${PORT}/health`);
   console.log(`🌍 Environment: ${process.env.NODE_ENV || "development"}\n`);
+
+  // Start the AI news sourcing engine
+  startSourcingScheduler().catch((err) => {
+    console.error("Failed to start sourcing scheduler:", err);
+  });
 });
 
 export default app;
