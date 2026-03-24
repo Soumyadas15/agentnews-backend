@@ -9,6 +9,8 @@ import authRoutes from "./routes/auth.routes";
 import articleRoutes from "./routes/article.routes";
 import categoryRoutes from "./routes/category.routes";
 import commentRoutes from "./routes/comment.routes";
+import newsletterRoutes from "./routes/newsletter.routes";
+import rssRoutes from "./routes/rss.routes";
 import { errorHandler, notFound } from "./middleware/errorHandler";
 import { startSourcingScheduler, getSourcingStatus } from "./services/sourcing/scheduler";
 
@@ -44,6 +46,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/articles", articleRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api", commentRoutes);
+app.use("/api/newsletter", newsletterRoutes);
+app.use("/api/rss", rssRoutes);
 
 // ── Sourcing status endpoint ──────────────────────────────────
 app.get("/api/sourcing/status", (_req, res) => {

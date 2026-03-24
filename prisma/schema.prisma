@@ -17,88 +17,97 @@ enum Role {
 }
 
 model User {
-  id        String    @id @default(cuid())
-  email     String    @unique
-  username  String    @unique
+  id        String   @id @default(cuid())
+  email     String   @unique
+  username  String   @unique
   password  String
   name      String
   avatar    String?
   bio       String?
-  role      Role      @default(READER)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  role      Role     @default(READER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  articles  Article[]
-  comments  Comment[]
+  articles Article[]
+  comments Comment[]
 
   @@map("users")
 }
 
 model Category {
-  id          String    @id @default(cuid())
-  name        String    @unique
-  slug        String    @unique
+  id          String   @id @default(cuid())
+  name        String   @unique
+  slug        String   @unique
   description String?
-  color       String?   @default("#3B82F6")
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  color       String?  @default("#3B82F6")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  articles    Article[]
+  articles Article[]
 
   @@map("categories")
 }
 
 model Article {
-  id          String        @id @default(cuid())
+  id          String    @id @default(cuid())
   title       String
-  slug        String        @unique
+  slug        String    @unique
   excerpt     String
   content     String
   coverImage  String?
-  published   Boolean       @default(false)
-  featured    Boolean       @default(false)
-  views       Int           @default(0)
+  published   Boolean   @default(false)
+  featured    Boolean   @default(false)
+  views       Int       @default(0)
   publishedAt DateTime?
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
-  authorId    String
-  author      User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
-  categoryId  String
-  category    Category      @relation(fields: [categoryId], references: [id])
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
 
-  tags        Tag[]
-  comments    Comment[]
+  tags     Tag[]
+  comments Comment[]
 
   @@map("articles")
 }
 
 model Tag {
-  id        String    @id @default(cuid())
-  name      String    @unique
-  slug      String    @unique
-  createdAt DateTime  @default(now())
+  id        String   @id @default(cuid())
+  name      String   @unique
+  slug      String   @unique
+  createdAt DateTime @default(now())
 
-  articles  Article[]
+  articles Article[]
 
   @@map("tags")
 }
 
 model Comment {
-  id        String    @id @default(cuid())
+  id        String   @id @default(cuid())
   content   String
-  approved  Boolean   @default(false)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  approved  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  authorId  String
-  author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   articleId String
-  article   Article   @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
 
   @@map("comments")
+}
+
+model NewsletterSubscriber {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  subscribedAt DateTime @default(now())
+  active       Boolean  @default(true)
+
+  @@map("newsletter_subscribers")
 }
 
 // Tracks URLs already ingested by the sourcing engine to prevent duplicates
@@ -109,7 +118,7 @@ model SourcedArticle {
   sourceName  String
   fetchedAt   DateTime @default(now())
   published   Boolean  @default(false)
-  articleId   String?  // linked Article if successfully created
+  articleId   String? // linked Article if successfully created
 
   @@map("sourced_articles")
 }
